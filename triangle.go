@@ -4,7 +4,7 @@ type Triangle struct {
 	phaser
 }
 
-func NewTriangle(freq, sampleRate float64) *Triangle {
+func NewTriangle(freq Note, sampleRate float64) *Triangle {
 	return &Triangle{newPhaser(freq, sampleRate)}
 }
 
@@ -14,6 +14,6 @@ func (t *Triangle) process(fs []float32) {
 		if n < 0 {
 			n = -n
 		}
-		fs[i] = n - 1
+		fs[i] = float32(n - 1)
 	}
 }

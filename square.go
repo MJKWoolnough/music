@@ -4,8 +4,8 @@ type Square struct {
 	phaser
 }
 
-func NewSquare(freq, sampleRate float64) *Square {
-	return &Square{newPhaser(freq, sampleRate, 0)}
+func NewSquare(freq Note, sampleRate float64) *Square {
+	return &Square{newPhaser(freq, sampleRate)}
 }
 
 func (s *Square) process(fs []float32) {

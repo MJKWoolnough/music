@@ -4,8 +4,8 @@ type Saw struct {
 	phaser
 }
 
-func NewSaw(freq, sampleRate float64) *Saw {
-	return &Saw{newPhaser(freq, sampleRate, 0)}
+func NewSaw(freq Note, sampleRate float64) *Saw {
+	return &Saw{newPhaser(freq, sampleRate)}
 }
 
 func (s *Saw) process(fs []float32) {

@@ -3,10 +3,10 @@ package music
 import "math"
 
 type Sine struct {
-	phraser
+	phaser
 }
 
-func NewSine(freq, sampleRate float64) *Sine {
+func NewSine(freq Note, sampleRate float64) *Sine {
 	return &Sine{newPhaser(freq, sampleRate)}
 }
 
