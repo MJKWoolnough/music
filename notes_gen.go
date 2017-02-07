@@ -65,16 +65,16 @@ func main() {
 		key, pitch, num)
 	e("error writing file header", err)
 
-	spaces = spaces[:numSize(num)-1]
+	spaces = spaces[:numSize(num)+1]
 
 	semitone := math.Pow(2, float64(1)/12)
 	keyF := float64(key)
 	for i := uint(0); i < num; i++ {
 		note := pitch * math.Pow(semitone, float64(i)-float64(keyF)-8)
-		_, err = fmt.Fprintf(f, "	%s%d %sNote = %f\n", notes[i%12], i/12, spaces[len(notes[i%12]):], note)
+		_, err = fmt.Fprintf(f, "	%s%d%sNote = %f\n", notes[i%12], i/12, spaces[uint(len(notes[i%12]))+numSize(i/12):], note)
 		e("error writing note", err)
 		if sn, ok := same[notes[i%12]]; ok {
-			_, err = fmt.Fprintf(f, "	%s%d %sNote = %f\n", sn, i/12, spaces[len(notes[i%12]):], note)
+			_, err = fmt.Fprintf(f, "	%s%d%sNote = %f\n", sn, i/12, spaces[uint(len(notes[i%12]))+numSize(i/12):], note)
 			e("error writing note", err)
 		}
 	}
