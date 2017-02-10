@@ -11,10 +11,6 @@ type Wave interface {
 	next() float64
 }
 
-type Profile interface {
-	next() (float64, bool)
-}
-
 type note struct {
 	Wave
 	Profile
