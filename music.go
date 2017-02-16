@@ -1,6 +1,10 @@
 package music
 
-import "github.com/gordonklaus/portaudio"
+import (
+	"math"
+
+	"github.com/gordonklaus/portaudio"
+)
 
 var (
 	Initialize = portaudio.Initialize
@@ -22,15 +26,20 @@ func (s sounds) Swap(i, j int) {
 }
 
 type sound struct {
-	Note
-	Profile
+	Note       Note
+	Wave       func(float64, float64) float64
+	Profile    func(float64) float64
 	Start, End uint32
+}
+
+func (s sound) Val(rate, time float64) float32 {
+	return s.Profile(s.Wave(math.Mod(time * float64(s.Note) / rate)))
 }
 
 type Player struct {
 	*portaudio.Stream
 	sampleRate float64
-	time       uint32
+	time       float64
 	sounds
 }
 
@@ -46,7 +55,18 @@ func New(sampleRate float64) (*Player, error) {
 
 func (p *Player) process(data [][]float32) {
 	for i := range data[0] {
-		data[0][i] = 0
+		var f, num float32
+		for _, sound := range p.sounds {
+			if sound.Start <= p.time && sound.End > p.time {
+				f += p.sounds[j].Val(p.sampleRate, p.time)
+				num++
+			}
+		}
+		if num > 0 {
+			data[0][i] = f / num
+		} else {
+			data[0][i] = 0
+		}
 		p.time++
 	}
 }
