@@ -27,46 +27,49 @@ func (s sounds) Swap(i, j int) {
 
 type sound struct {
 	Note       Note
-	Wave       func(int64, int64) int64
-	Profile    func(int64, int64) int64
+	Wave       func(float64, float64) float64
+	Profile    func(float64, float64) float64
 	Start, End int64
 }
 
-func (s sound) Val(rate, time uint64) uint64 {
+func (s sound) Val(rate, time float64) float64 {
 	return s.Profile(s.Wave(math.Mod(time * float64(s.Note) / rate)))
 }
 
 type Player struct {
 	*portaudio.Stream
-	sampleRate int64
-	time       int64
-	sounds
+	sampleRate float64
+	time       uint64
+	channels   []sounds
 }
 
-func New(sampleRate int64) (*Player, error) {
-	p := &Player{sampleRate: sampleRate}
+func New(sampleRate int64, channels int) (*Player, error) {
+	p := &Player{sampleRate: sampleRate, channels: make([]sounds, channels)}
 	var err error
-	p.Stream, err = portaudio.OpenDefaultStream(0, 1, sampleRate, 0, p.process)
+	p.Stream, err = portaudio.OpenDefaultStream(0, channels, sampleRate, 0, p.process)
 	if err != nil {
 		return nil, err
 	}
 	return p, nil
 }
 
-func (p *Player) process(data [][]int32) {
-	for i := range data[0] {
-		var f, num int64
-		for _, sound := range p.sounds {
-			if sound.Start <= p.time && sound.End > p.time {
-				f += p.sounds[j].Val(p.sampleRate, p.time)
-				num++
+func (p *Player) process(data [][]float32) {
+	for j, input := range data {
+		channel = p.channels[j]
+		for i := range input {
+			var f, num float64
+			for _, sound := range channel {
+				if sound.Start <= p.time && sound.End > p.time {
+					f += p.sounds[j].Val(p.sampleRate, p.time)
+					num++
+				}
 			}
+			if num > 0 {
+				input[i] = float32(f / num)
+			} else {
+				input[i] = 0
+			}
+			p.time++
 		}
-		if num > 0 {
-			data[0][i] = int32(f / num)
-		} else {
-			data[0][i] = 0
-		}
-		p.time++
 	}
 }
