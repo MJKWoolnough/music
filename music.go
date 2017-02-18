@@ -43,7 +43,7 @@ type Player struct {
 	channels   []sounds
 }
 
-func New(sampleRate int64, channels int) (*Player, error) {
+func New(sampleRate float64, channels int) (*Player, error) {
 	p := &Player{sampleRate: sampleRate, channels: make([]sounds, channels)}
 	var err error
 	p.Stream, err = portaudio.OpenDefaultStream(0, channels, sampleRate, 0, p.process)
