@@ -1,9 +1,5 @@
 package music
 
-type Saw struct {
-	phaser
-}
-
-func NewSaw(freq Note, sampleRate float64) *Saw {
-	return &Saw{newPhaser(freq, sampleRate)}
+func Saw(phase float64) float64 {
+	return phase*2 - 1
 }
