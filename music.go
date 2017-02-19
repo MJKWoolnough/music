@@ -56,6 +56,17 @@ func New(sampleRate float64, channels int) (*Player, error) {
 	return p, nil
 }
 
+func (p *Player) Add(start, length uint64, note Note, wave func(float64) float64, profile func(float64) float64, channel int) {
+	p.sounds = append(p.sounds, sound{
+		Note:    note,
+		Wave:    wave,
+		Profile: profile,
+		channel: channel,
+		Start:   start,
+		End:     start + length,
+	})
+}
+
 func (p *Player) process(data [][]float32) {
 	for j, input := range data {
 		for i := range input {
