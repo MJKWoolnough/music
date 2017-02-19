@@ -2,6 +2,7 @@ package music
 
 import (
 	"math"
+	"sort"
 
 	"github.com/gordonklaus/portaudio"
 )
@@ -14,7 +15,7 @@ var (
 type sounds []sound
 
 func (s sounds) Len() int {
-	return len(*s)
+	return len(s)
 }
 
 func (s sounds) Less(i, j int) bool {
@@ -27,24 +28,26 @@ func (s sounds) Swap(i, j int) {
 
 type sound struct {
 	Note       Note
-	Wave       func(float64, float64) float64
-	Profile    func(float64, float64) float64
-	Start, End int64
+	Wave       func(phase float64) float64
+	Profile    func(position float64) float64
+	channel    int
+	Start, End uint64
 }
 
 func (s sound) Val(rate, time float64) float64 {
-	return s.Profile(s.Wave(math.Mod(time * float64(s.Note) / rate)))
+	_, frac := math.Modf(time * float64(s.Note) / rate)
+	return s.Profile(time/float64(s.End-s.Start)) * s.Wave(frac)
 }
 
 type Player struct {
 	*portaudio.Stream
 	sampleRate float64
 	time       uint64
-	channels   []sounds
+	sounds     sounds
 }
 
 func New(sampleRate float64, channels int) (*Player, error) {
-	p := &Player{sampleRate: sampleRate, channels: make([]sounds, channels)}
+	p := &Player{sampleRate: sampleRate}
 	var err error
 	p.Stream, err = portaudio.OpenDefaultStream(0, channels, sampleRate, 0, p.process)
 	if err != nil {
@@ -55,13 +58,16 @@ func New(sampleRate float64, channels int) (*Player, error) {
 
 func (p *Player) process(data [][]float32) {
 	for j, input := range data {
-		channel = p.channels[j]
 		for i := range input {
 			var f, num float64
-			for _, sound := range channel {
-				if sound.Start <= p.time && sound.End > p.time {
-					f += p.sounds[j].Val(p.sampleRate, p.time)
-					num++
+			for _, sound := range p.sounds {
+				if sound.channel == j && sound.Start <= p.time {
+					if sound.End > p.time {
+						f += sound.Val(p.sampleRate, float64(p.time-sound.Start))
+						num++
+					}
+				} else {
+					break
 				}
 			}
 			if num > 0 {
@@ -71,5 +77,17 @@ func (p *Player) process(data [][]float32) {
 			}
 			p.time++
 		}
+	}
+	changed := false
+	for i := 0; i < len(p.sounds); i++ {
+		if p.sounds[i].End <= p.time {
+			p.sounds[i] = p.sounds[len(p.sounds)-1]
+			p.sounds = p.sounds[:len(p.sounds)-1]
+			i--
+			changed = true
+		}
+	}
+	if changed {
+		sort.Sort(p.sounds)
 	}
 }
