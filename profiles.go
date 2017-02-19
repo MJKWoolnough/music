@@ -4,7 +4,7 @@ func Steady(_ float64) float64 {
 	return 1
 }
 
-func Adjust(amount_ float64) func(float64) float64 {
+func Adjust(amount float64) func(float64) float64 {
 	return func(_ float64) float64 {
 		return amount
 	}
