@@ -28,7 +28,7 @@ func (s sounds) Swap(i, j int) {
 
 type sound struct {
 	Note       Note
-	Wave       func(phase float64) float64
+	Wave       Wave
 	Profile    Profile
 	channel    int
 	Start, End uint64

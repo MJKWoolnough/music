@@ -2,6 +2,8 @@ package music
 
 import "math"
 
+type Wave func(phase float64) float64
+
 func Saw(phase float64) float64 {
 	return phase*2 - 1
 }
