@@ -1,5 +1,7 @@
 package music
 
+import "math"
+
 type Profile func(pos float64) float64
 
 func Steady(_ float64) float64 {
@@ -24,4 +26,12 @@ func RampUp(pos float64) float64 {
 
 func RampDown(pos float64) float64 {
 	return 1 - pos
+}
+
+func ExponentialUp(pos float64) float64 {
+	return math.Pow(math.E, 6*(pos-1))
+}
+
+func ExponentialDown(pos float64) float64 {
+	return math.Pow(math.E, -6*pos)
 }
