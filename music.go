@@ -68,6 +68,15 @@ func (p *Player) Add(start, length uint64, note Note, wave func(float64) float64
 	})
 }
 
+func (p *Player) EndZeroNote(length uint64, note Note) uint64 {
+	d := p.sampleRate / float64(note)
+	i, f := math.Modf(float64(length) / d)
+	if f == 0 {
+		return length
+	}
+	return uint64((i + 1) * d)
+}
+
 func (p *Player) process(data []float32) {
 	c := 0
 	for i := range data {
