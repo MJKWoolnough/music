@@ -85,24 +85,19 @@ func (p *Player) process(data []float32) {
 			c = 0
 			p.time++
 		}
-		var f, num float64
+		var f float64
 		for _, sound := range p.sounds {
 			if sound.channel == c {
 				if sound.Start <= p.time {
 					if sound.End > p.time {
 						f += sound.Val(p.sampleRate, float64(p.time-sound.Start))
-						num++
 					}
 				} else {
 					break
 				}
 			}
 		}
-		if num > 0 {
-			data[i] = float32(f / num)
-		} else {
-			data[i] = 0
-		}
+		data[i] = float32(f)
 	}
 	changed := false
 	for i := 0; i < len(p.sounds); i++ {
