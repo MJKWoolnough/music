@@ -81,6 +81,13 @@ func (p *Player) EndZeroNote(length uint64, note Note) uint64 {
 	return uint64((i + 1) * d)
 }
 
+func (p *Player) Time() uint64 {
+	p.mu.Lock()
+	t := p.time
+	p.mu.Unlock()
+	return t
+}
+
 func (p *Player) process(data [][]float32) {
 	var time uint64
 	p.mu.Lock()
