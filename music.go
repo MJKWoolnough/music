@@ -111,6 +111,10 @@ func (p *Player) process(data [][]float32) {
 		}
 	}
 	p.time = time
+	go p.update()
+}
+
+func (p *Player) update() {
 	changed := false
 	for i := 0; i < len(p.sounds); i++ {
 		if p.sounds[i].End <= p.time {
