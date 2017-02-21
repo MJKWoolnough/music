@@ -3,6 +3,7 @@ package music
 import (
 	"math"
 	"sort"
+	"sync"
 
 	"github.com/gordonklaus/portaudio"
 )
@@ -42,8 +43,10 @@ func (s sound) Val(rate, time float64) float64 {
 type Player struct {
 	*portaudio.Stream
 	sampleRate float64
-	time       uint64
-	sounds     sounds
+
+	mu     sync.Mutex
+	time   uint64
+	sounds sounds
 }
 
 func New(sampleRate float64, channels int) (*Player, error) {
@@ -57,6 +60,7 @@ func New(sampleRate float64, channels int) (*Player, error) {
 }
 
 func (p *Player) Add(start, length uint64, note Note, wave func(float64) float64, profile func(float64) float64, channel int) {
+	p.mu.Lock()
 	p.sounds = append(p.sounds, sound{
 		Note:    note,
 		Wave:    wave,
@@ -65,6 +69,7 @@ func (p *Player) Add(start, length uint64, note Note, wave func(float64) float64
 		Start:   start,
 		End:     start + length,
 	})
+	p.mu.Unlock()
 }
 
 func (p *Player) EndZeroNote(length uint64, note Note) uint64 {
@@ -78,6 +83,7 @@ func (p *Player) EndZeroNote(length uint64, note Note) uint64 {
 
 func (p *Player) process(data [][]float32) {
 	var time uint64
+	p.mu.Lock()
 	for channel, dc := range data {
 		time = p.time
 		for i := range dc {
@@ -110,4 +116,5 @@ func (p *Player) process(data [][]float32) {
 	if changed {
 		sort.Sort(p.sounds)
 	}
+	p.mu.Unlock()
 }
