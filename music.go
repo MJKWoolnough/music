@@ -44,11 +44,10 @@ type Player struct {
 	sampleRate float64
 	time       uint64
 	sounds     sounds
-	channels   int
 }
 
 func New(sampleRate float64, channels int) (*Player, error) {
-	p := &Player{sampleRate: sampleRate, channels: channels}
+	p := &Player{sampleRate: sampleRate}
 	var err error
 	p.Stream, err = portaudio.OpenDefaultStream(0, channels, sampleRate, 0, p.process)
 	if err != nil {
@@ -77,28 +76,28 @@ func (p *Player) EndZeroNote(length uint64, note Note) uint64 {
 	return uint64((i + 1) * d)
 }
 
-func (p *Player) process(data []float32) {
-	c := 0
-	for i := range data {
-		c++
-		if c == p.channels {
-			c = 0
-			p.time++
-		}
-		var f float64
-		for _, sound := range p.sounds {
-			if sound.channel == c {
-				if sound.Start <= p.time {
-					if sound.End > p.time {
-						f += sound.Val(p.sampleRate, float64(p.time-sound.Start))
+func (p *Player) process(data [][]float32) {
+	var time uint64
+	for channel, dc := range data {
+		time = p.time
+		for i := range dc {
+			var f float64
+			for _, sound := range p.sounds {
+				if sound.channel == channel {
+					if sound.Start <= time {
+						if sound.End > time {
+							f += sound.Val(p.sampleRate, float64(time-sound.Start))
+						}
+					} else {
+						break
 					}
-				} else {
-					break
 				}
 			}
+			time++
+			dc[i] = float32(f)
 		}
-		data[i] = float32(f)
 	}
+	p.time = time
 	changed := false
 	for i := 0; i < len(p.sounds); i++ {
 		if p.sounds[i].End <= p.time {
