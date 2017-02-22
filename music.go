@@ -69,6 +69,7 @@ func (p *Player) Add(start, length uint64, note Note, wave func(float64) float64
 		Start:   start,
 		End:     start + length,
 	})
+	sort.Sort(p.sounds)
 	p.mu.Unlock()
 }
 
