@@ -89,6 +89,10 @@ func (p *Player) Time() uint64 {
 	return t
 }
 
+func (p *Player) Rate() float64 {
+	return p.sampleRate
+}
+
 func (p *Player) process(data [][]float32) {
 	var time uint64
 	p.mu.Lock()
