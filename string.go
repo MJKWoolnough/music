@@ -11,10 +11,12 @@ type String struct {
 	decay float64
 }
 
-func NewString(n Note, rate float64) *String {
+const StringDecay = 0.4998
+
+func NewString(n Note, rate, decay float64) *String {
 	return &String{
 		data:  make([]float64, int(rate/float64(n))),
-		decay: 0.4998,
+		decay: decay,
 	}
 }
 
