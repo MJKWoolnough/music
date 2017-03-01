@@ -35,3 +35,11 @@ func ExponentialUp(pos float64) float64 {
 func ExponentialDown(pos float64) float64 {
 	return math.Pow(math.E, -6*pos)
 }
+
+func InverseExponentialUp(pos float64) float64 {
+	return 1 - ExponentialDown(pos)
+}
+
+func InverseExponentialDown(pos float64) float64 {
+	return 1 - ExponentialUp(pos)
+}
