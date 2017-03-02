@@ -28,7 +28,6 @@ func (s sounds) Swap(i, j int) {
 }
 
 type sound struct {
-	Note       Note
 	Wave       Wave
 	Profile    Profile
 	channel    int
@@ -36,8 +35,7 @@ type sound struct {
 }
 
 func (s sound) Val(rate, time float64) float64 {
-	_, frac := math.Modf(time * float64(s.Note) / rate)
-	return s.Profile(time/float64(s.End-s.Start)) * s.Wave(frac)
+	return s.Profile(time/float64(s.End-s.Start)) * s.Wave(time/rate)
 }
 
 type Player struct {
@@ -59,10 +57,9 @@ func New(sampleRate float64, channels int) (*Player, error) {
 	return p, nil
 }
 
-func (p *Player) Add(start, length uint64, note Note, wave func(float64) float64, profile func(float64) float64, channel int) {
+func (p *Player) Add(start, length uint64, wave func(float64) float64, profile func(float64) float64, channel int) {
 	p.mu.Lock()
 	p.sounds = append(p.sounds, sound{
-		Note:    note,
 		Wave:    wave,
 		Profile: profile,
 		channel: channel,

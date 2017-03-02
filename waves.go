@@ -4,23 +4,27 @@ import "math"
 
 type Wave func(phase float64) float64
 
-func Saw(phase float64) float64 {
-	return phase*2 - 1
+func (n Note) Saw(phase float64) float64 {
+	_, frac := math.Modf(float64(n) * phase)
+	return frac*2 - 1
 }
 
-func Sine(phase float64) float64 {
-	return math.Sin(2 * math.Pi * phase)
+func (n Note) Sine(phase float64) float64 {
+	_, frac := math.Modf(float64(n) * phase)
+	return math.Sin(2 * math.Pi * frac)
 }
-func Square(phase float64) float64 {
-	if phase > 0.5 {
+func (n Note) Square(phase float64) float64 {
+	_, frac := math.Modf(float64(n) * phase)
+	if frac > 0.5 {
 		return 1
 	}
 	return -1
 }
 
-func Triangle(phase float64) float64 {
-	if phase < 0.5 {
-		return 4*phase - 1
+func (n Note) Triangle(phase float64) float64 {
+	_, frac := math.Modf(float64(n) * phase)
+	if frac < 0.5 {
+		return 4*frac - 1
 	}
-	return 2 - 4*phase
+	return 2 - 4*frac
 }
