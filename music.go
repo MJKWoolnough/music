@@ -91,8 +91,13 @@ func (p *Player) Rate() uint64 {
 }
 
 func (p *Player) process(data [][]float32) {
-	var time uint64
 	p.mu.Lock()
+	p.time = p.processMusic(data)
+	go p.update()
+}
+
+func (p *Player) processMusic(data [][]float32) uint64 {
+	var time uint64
 	for channel, dc := range data {
 		time = p.time
 		for i := range dc {
@@ -112,8 +117,7 @@ func (p *Player) process(data [][]float32) {
 			dc[i] = float32(f)
 		}
 	}
-	p.time = time
-	go p.update()
+	return time
 }
 
 func (p *Player) update() {
