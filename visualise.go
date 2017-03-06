@@ -11,6 +11,7 @@ var (
 	middleLine = lcolor.RGB{G: 255}
 	bottomLine = lcolor.RGB{B: 255}
 	point      = lcolor.RGB{}
+	between    = lcolor.RGB{R: 127, G: 127, B: 127}
 )
 
 func (p *Player) Visualise(im draw.Image, channels int) {
@@ -32,11 +33,22 @@ func (p *Player) Visualise(im draw.Image, channels int) {
 	bottom := channelHeight
 	for _, channel := range sounds {
 		x := b.Min.X
+		last := 0
 		for _, sample := range channel {
 			p := int(sample*float32(channelHeight>>1)) + middle
 			im.Set(x, top, topLine)
 			im.Set(x, middle, middleLine)
 			im.Set(x, bottom, bottomLine)
+			if last < p {
+				for i := last; i < p; i++ {
+					im.Set(x, i, between)
+				}
+			} else if last > p {
+				for i := last; i > p; i-- {
+					im.Set(x, i, between)
+				}
+			}
+			last = p
 			im.Set(x, p, point)
 			x++
 		}
