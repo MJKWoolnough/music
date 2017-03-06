@@ -26,5 +26,5 @@ func (n Note) Triangle(phase float64) float64 {
 	if frac < 0.5 {
 		return 4*frac - 1
 	}
-	return 2 - 4*frac
+	return 3 - 4*frac
 }
