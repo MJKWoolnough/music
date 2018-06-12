@@ -1,6 +1,6 @@
-package piano
+package piano // import "vimagination.zapto.org/music/instruments/string/piano"
 
-import "github.com/MJKWoolnough/music"
+import "vimagination.zapto.org/music"
 
 type Piano struct {
 	player *music.Player

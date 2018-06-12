@@ -3,7 +3,7 @@ package music
 import (
 	"image/draw"
 
-	"github.com/MJKWoolnough/limage/lcolor"
+	"vimagination.zapto.org/limage/lcolor"
 )
 
 var (

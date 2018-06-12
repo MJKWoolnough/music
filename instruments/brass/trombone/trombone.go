@@ -1,6 +1,6 @@
-package trombone
+package trombone // import "vimagination.zapto.org/music/instruments/brass/trombone"
 
-import "github.com/MJKWoolnough/music"
+import "vimagination.zapto.org/music"
 
 type Trombone struct {
 	player *music.Player

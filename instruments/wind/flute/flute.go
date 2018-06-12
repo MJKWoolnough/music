@@ -1,6 +1,6 @@
-package flute
+package flute // import "vimagination.zapto.org/music/instruments/wind/flute"
 
-import "github.com/MJKWoolnough/music"
+import "vimagination.zapto.org/music"
 
 type Flute struct {
 	player *music.Player

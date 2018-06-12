@@ -1,6 +1,6 @@
-package guitar
+package guitar // import "vimagination.zapto.org/music/instruments/string/guitar"
 
-import "github.com/MJKWoolnough/music"
+import "vimagination.zapto.org/music"
 
 type Guitar struct {
 	player *music.Player

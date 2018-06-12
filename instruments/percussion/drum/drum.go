@@ -1,6 +1,6 @@
-package drum
+package drum // import "vimagination.zapto.org/music/instruments/percussion/drum"
 
-import "github.com/MJKWoolnough/music"
+import "vimagination.zapto.org/music"
 
 type Drum struct {
 	player *music.Player

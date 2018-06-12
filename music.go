@@ -1,4 +1,4 @@
-package music
+package music // import "vimagination.zapto.org/music"
 
 import (
 	"math"
